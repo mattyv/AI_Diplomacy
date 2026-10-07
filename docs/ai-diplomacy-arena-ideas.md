@@ -182,6 +182,47 @@ Caching depends on matching content, provider behavior, model, and cache lifetim
 Its effect on subscription allowances should be measured separately from API
 pricing. See [Claude prompt caching documentation](https://platform.claude.com/docs/en/build-with-claude/prompt-caching).
 
+## Hosting with GitHub Pages
+
+GitHub Pages can host the browser viewer, map assets, and saved-game data. It
+serves static files; the Python game runner and Claude Code or Codex CLI
+processes must run on a player's computer or a separate server. See
+[GitHub Pages documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
+
+### First step: public replays
+
+Publish the existing viewer on the fork's GitHub Pages site, with a game picker
+and a recorded demo. Bundle selected completed games and their highlights with
+the site. Visitors can watch without installing anything or connecting a model.
+
+Adapt asset and game-data paths to the repository's Pages URL, build the viewer
+through GitHub Actions, and publish the static output. Disable features that
+depend on private credentials or a running local server. Review exported game
+data before publishing: include only messages and diaries intended for public
+viewing, and exclude credentials and raw diagnostic logs.
+
+### Live spectating
+
+Keep the viewer on Pages and run the game on a computer or separate server.
+Provide a public HTTPS endpoint for spectator updates, with browser access
+allowed from the Pages site. The viewer can poll snapshots or subscribe to an
+update stream. Publish only information permitted by the spectator reveal rules.
+
+Uploading a finished replay is the simplest starting point. Updating a Pages
+deployment for every turn would introduce publishing delays, so a separate live
+data endpoint is preferable for continuous spectating.
+
+### Multiplayer with each player's own CLI
+
+Pages hosts the lobby and viewer interface. A separate coordinator manages
+invites, country assignments, deadlines, private messages, and authoritative
+game state. Each player's local connector initiates an authenticated connection
+to that coordinator and invokes the player's own CLI, as described above.
+
+The public website cannot itself launch a visitor's installed CLI. Joining a
+match therefore requires the local connector. Hosting the interface on Pages
+does not remove the need to operate the coordinator for live multiplayer games.
+
 ## Suggested order
 
 1. **Make the existing game observable and efficient.** Record actual usage,
@@ -190,7 +231,10 @@ pricing. See [Claude prompt caching documentation](https://platform.claude.com/d
    strategic intentions to existing turn outputs.
 3. **Create the drama layer.** Track promises, reveal betrayals with evidence,
    and produce a highlights replay from a saved game.
-4. **Invite other players.** Build the lobby, local connector, deadlines, and
+4. **Publish a replay site.** Put the viewer, a game picker, and selected completed
+   games on GitHub Pages. Add a separate spectator endpoint when live updates
+   are needed.
+5. **Invite other players.** Build the lobby, local connector, deadlines, and
    reconnect behavior, beginning with one private seven-country match.
 
 ## Decisions to resolve before implementation
